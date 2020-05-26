@@ -1,35 +1,145 @@
 package com.example.mymoviememoir;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mymoviememoir.model.Credential;
+import com.example.mymoviememoir.network.OKHttpConnection;
+import com.google.gson.Gson;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class SignIn extends AppCompatActivity {
+
+    OKHttpConnection okHttpConnection = null;
+    String result = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in);
 
+        okHttpConnection = new OKHttpConnection();
+
         // Get UI
-        EditText etUsername = findViewById(R.id.sign_in_et_username);
-        EditText etPassword = findViewById(R.id.sign_in_et_password);
+        final EditText etUsername = findViewById(R.id.sign_in_et_username);
+        final EditText etPassword = findViewById(R.id.sign_in_et_password);
         Button btnSignIn = findViewById(R.id.sign_in_bt_signin);
         Button btnSignUp = findViewById(R.id.sign_in_bt_signup);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String username = etUsername.getText().toString().trim();
+                String password = etPassword.getText().toString().trim();
 
-                // Turn to the MainActivity to release Home Screen
-                Intent intent = new Intent(SignIn.this, MainActivity.class);
+                FindByUsername findByUsername = new FindByUsername();
+
+                if (username.isEmpty()) {
+                    sendToast("Please Enter the User Name");
+                } else if (password.isEmpty()) {
+                    sendToast("Please Enter the Password");
+                } else {
+                    findByUsername.execute(username);
+                    if (result.isEmpty()) {
+                        sendToast("User Not Found");
+                    } else if (passwordRight(password)) {
+                        // Turn to the MainActivity to release Home Screen
+                        Intent intent = new Intent(SignIn.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        sendToast("Wrong Password");
+                    }
+                }
+            }
+        });
+
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignIn.this, SignUp.class);
                 startActivity(intent);
             }
         });
     }
+
+    // OKHttpConnection to NetBean
+    private class FindByUsername extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String username = strings[0];
+            return okHttpConnection.findByUsername(username);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            result = s;
+        }
+    }
+
+    // Check password design, password should include digit and letter
+    public static boolean checkPassword(String password) {
+        boolean isDigit = false;
+        boolean isLetter = false;
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isDigit(password.charAt(i))) {
+                isDigit = true;
+            } else if (Character.isLowerCase(password.charAt(i)) || Character.isUpperCase(password.charAt(i))) {
+                isLetter = true;
+            }
+        }
+        return isDigit && isLetter;
+    }
+
+    // Check password is right or not
+    public boolean passwordRight(String password) {
+        String passwordHash = "";
+
+        // get passwordhash from result
+        Gson gson = new Gson();
+        System.out.println(result);
+        Credential[] credentials = gson.fromJson(result, Credential[].class);
+
+        // transfer the input password with MD5
+        passwordHash = md5(password).substring(8,24);
+
+        return passwordHash.equals(credentials[0].getPasswordhash());
+    }
+
+    // transfer with MD5
+    public static String md5(String originalStr) {
+        MessageDigest messageDigest = null;
+        String result = "";
+
+        try {
+            messageDigest = MessageDigest.getInstance("MD5");
+            byte[] bytes = messageDigest.digest(originalStr.getBytes());
+            for (byte b: bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result += temp;
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    // Toast
+    protected void sendToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
 }

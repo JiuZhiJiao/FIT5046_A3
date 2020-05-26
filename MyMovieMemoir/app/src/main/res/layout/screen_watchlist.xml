@@ -8,4 +8,10 @@
         android:layout_height="wrap_content"
         android:text="This is watchlist screen" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/watchilist_bt_delete"
+        android:text="Delete" />
+
 </LinearLayout>

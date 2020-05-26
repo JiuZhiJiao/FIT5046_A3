@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">MyMovieMemoir</string>
+    <string name="sign_in_title">Sign In</string>
+    <string name="sign_up_title">Sign Up</string>
     <string name="NavOpen">open</string>
     <string name="NavClose">close</string>
+    <string-array name="states">
+        <item>WA</item>
+        <item>QLD</item>
+        <item>NSW</item>
+        <item>VIC</item>
+        <item>SA</item>
+        <item>TAS</item>
+        <item>NT</item>
+        <item>ACT</item>
+    </string-array>
 </resources>
