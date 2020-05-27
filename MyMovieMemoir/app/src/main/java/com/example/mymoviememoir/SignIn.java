@@ -24,6 +24,7 @@ public class SignIn extends AppCompatActivity {
     String username = "";
     String password = "";
     String result = "";
+    Credential credential = new Credential();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +82,12 @@ public class SignIn extends AppCompatActivity {
                 sendToast("User Not Found");
             } else {
                 if (passwordRight(password)) {
+                    // Pass credential
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("credentialFromSignIn", credential);
                     // Turn to the MainActivity to release Home Screen
                     Intent intent = new Intent(SignIn.this, MainActivity.class);
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 } else {
                     sendToast("Wrong Password");
@@ -98,6 +103,7 @@ public class SignIn extends AppCompatActivity {
         // get passwordhash from result
         Gson gson = new Gson();
         Credential[] credentials = gson.fromJson(result, Credential[].class);
+        credential = credentials[0];
 
         // transfer the input password with MD5
         passwordHash = md5(password);

@@ -1,12 +1,49 @@
 package com.example.mymoviememoir.model;
 
-public class Credential {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Credential implements Parcelable {
 
     private int credentialsid;
     private String passwordhash;
     private String signupdate;
     private String username;
 
+    // Parcelable
+    public Credential(Parcel in) {
+        this.credentialsid = in.readInt();
+        this.passwordhash = in.readString();
+        this.signupdate = in.readString();
+        this.username = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(credentialsid);
+        dest.writeString(passwordhash);
+        dest.writeString(signupdate);
+        dest.writeString(username);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Credential> CREATOR = new Creator<Credential>() {
+        @Override
+        public Credential createFromParcel(Parcel source) {
+            return new Credential(source);
+        }
+
+        @Override
+        public Credential[] newArray(int size) {
+            return new Credential[size];
+        }
+    };
+
+    // Initial
     public Credential() {
 
     }

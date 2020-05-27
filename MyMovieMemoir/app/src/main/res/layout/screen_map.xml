@@ -6,6 +6,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This is map screen" />
+        android:text="This is map screen"
+        android:id="@+id/map_tv"/>
 
 </LinearLayout>

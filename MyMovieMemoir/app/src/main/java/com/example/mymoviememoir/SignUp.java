@@ -19,6 +19,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mymoviememoir.model.Credential;
+import com.example.mymoviememoir.model.Person;
 import com.example.mymoviememoir.network.OKHttpConnection;
 
 import java.security.MessageDigest;
@@ -195,8 +197,16 @@ public class SignUp extends AppCompatActivity {
                         String[] detailPerson = personDetails(detailCredential);
                         addPerson.execute(detailPerson);
 
+                        //pass person
+                        Credential credential = new Credential(countCredential, password, currentDate(), email);
+                        Person person = new Person(countPerson, firstName, lastName, gender, date, address, state, postcode, credential);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("credentialFromSignUp", credential);
+                        bundle.putParcelable("personFromSignUp", person);
+
                         // Turn to Home page
                         Intent intent = new Intent(SignUp.this, MainActivity.class);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                         sendToast("Sign Up Success");
                     }
