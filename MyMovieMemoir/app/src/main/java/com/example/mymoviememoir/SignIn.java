@@ -3,8 +3,6 @@ package com.example.mymoviememoir;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +21,8 @@ import java.security.NoSuchAlgorithmException;
 public class SignIn extends AppCompatActivity {
 
     OKHttpConnection okHttpConnection = null;
+    String username = "";
+    String password = "";
     String result = "";
 
     @Override
@@ -41,26 +41,18 @@ public class SignIn extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = etUsername.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
+                username = etUsername.getText().toString().trim();
+                password = etPassword.getText().toString().trim();
 
                 FindByUsername findByUsername = new FindByUsername();
 
+                // Check enter is empty or not
                 if (username.isEmpty()) {
                     sendToast("Please Enter the User Name");
                 } else if (password.isEmpty()) {
                     sendToast("Please Enter the Password");
                 } else {
                     findByUsername.execute(username);
-                    if (result.isEmpty()) {
-                        sendToast("User Not Found");
-                    } else if (passwordRight(password)) {
-                        // Turn to the MainActivity to release Home Screen
-                        Intent intent = new Intent(SignIn.this, MainActivity.class);
-                        startActivity(intent);
-                    } else {
-                        sendToast("Wrong Password");
-                    }
                 }
             }
         });
@@ -85,6 +77,17 @@ public class SignIn extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             result = s;
+            if (s.equals("[]")) {
+                sendToast("User Not Found");
+            } else {
+                if (passwordRight(password)) {
+                    // Turn to the MainActivity to release Home Screen
+                    Intent intent = new Intent(SignIn.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    sendToast("Wrong Password");
+                }
+            }
         }
     }
 

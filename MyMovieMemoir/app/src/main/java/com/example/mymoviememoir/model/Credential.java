@@ -7,6 +7,10 @@ public class Credential {
     private String signupdate;
     private String username;
 
+    public Credential() {
+
+    }
+
     public Credential(int credentialsid, String passwordhash, String signupdate, String username) {
         this.credentialsid = credentialsid;
         this.passwordhash = passwordhash;

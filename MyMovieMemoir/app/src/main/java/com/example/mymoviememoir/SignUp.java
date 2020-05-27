@@ -23,7 +23,10 @@ import com.example.mymoviememoir.network.OKHttpConnection;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 public class SignUp extends AppCompatActivity {
 
@@ -41,10 +44,18 @@ public class SignUp extends AppCompatActivity {
     private Button btnSignIn;
     private Button btnSignUp;
 
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
     private String gender;
     private String date;
     private String state;
-    private String userExist;
+    private String address;
+    private String postcode;
+    private boolean userExit;
+    private int countCredential;
+    private int countPerson;
     OKHttpConnection okHttpConnection = null;
 
     @Override
@@ -52,8 +63,8 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
 
-         radioGroup = findViewById(R.id.sign_up_radioGroup);
         // Get Gender from radio group
+        radioGroup = findViewById(R.id.sign_up_radioGroup);
         gender = "female";
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -69,6 +80,7 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        // Get DOB from date picker
         // Set the date picker
         displayDate = findViewById(R.id.sign_up_tv_datePicker);
         displayDate.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +114,7 @@ public class SignUp extends AppCompatActivity {
             }
         };
 
-        // set state
+        // Get State from spinner
         spinner = findViewById(R.id.sign_up_spinner);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -133,36 +145,73 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        userExist = "";
         okHttpConnection = new OKHttpConnection();
         btnSignUp = findViewById(R.id.sign_up_bt_signup);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstName = etFirstName.getText().toString().trim();
-                String lastName = etLastName.getText().toString().trim();
-                String email = etEmail.getText().toString().trim();
-                String password = etPassword.getText().toString().trim();
-                String address = etAddress.getText().toString().trim();
-                String postcode = etPostcode.getText().toString().trim();
+                userExit = false;
+                firstName = etFirstName.getText().toString().trim();
+                lastName = etLastName.getText().toString().trim();
+                email = etEmail.getText().toString().trim();
+                password = etPassword.getText().toString().trim();
+                address = etAddress.getText().toString().trim();
+                postcode = etPostcode.getText().toString().trim();
 
                 FindByUsername findByUsername = new FindByUsername();
+                GetCountCredential getCountCredential = new GetCountCredential();
+                GetCountPerson getCountPerson = new GetCountPerson();
+                AddCredential addCredential = new AddCredential();
+                AddPerson addPerson = new AddPerson();
+
+                // Check Enter is empty or not
                 if (validation(firstName,email,password)) {
                     // check user exist
                     findByUsername.execute(email);
-                    System.out.println(userExist);
-                    if (userExist.isEmpty()) {
-                        sendToast("User Exist, Please Sign In");
-                    } else {
+                    if (!userExit) {
+
+                        // Get the count of credential in the database
+                        try {
+                            countCredential = Integer.parseInt(getCountCredential.execute().get());
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Get the count fo person in the database
+                        try {
+                            countPerson = Integer.parseInt(getCountPerson.execute().get());
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Add new credential
+                        String[] detailCredential = credentialDetails();
+                        addCredential.execute(detailCredential);
+                        // Add new person
+                        String[] detailPerson = personDetails(detailCredential);
+                        addPerson.execute(detailPerson);
+
                         // Turn to Home page
                         Intent intent = new Intent(SignUp.this, MainActivity.class);
                         startActivity(intent);
                         sendToast("Sign Up Success");
                     }
+
                 }
 
             }
         });
+    }
+
+    // Get Sign Up Date (Current Date)
+    public String currentDate() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(System.currentTimeMillis());
+        return simpleDateFormat.format(date).toString()+"T00:00:00+11:00";
     }
 
     // validation
@@ -174,7 +223,7 @@ public class SignUp extends AppCompatActivity {
             sendToast("Please Enter Your Email as User Name");
         } else if (password.isEmpty()) {
             sendToast("Please Enter Your Password");
-        } else if (checkPassword(password)) {
+        } else if (!checkPassword(password)) {
             sendToast("Password Should Include One Letter And One Number At Least");
         } else {
             result = true;
@@ -182,7 +231,7 @@ public class SignUp extends AppCompatActivity {
         return result;
     }
 
-    // OKHttpConnection to NetBean
+    // Find the credential is exist or not
     private class FindByUsername extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
@@ -192,8 +241,90 @@ public class SignUp extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            userExist = s;
+            if (checkUserExist(s))
+                sendToast("User Exist: Please Sign In");
         }
+    }
+
+    // Check user exist or not, and set uerExit
+    protected boolean checkUserExist(String string) {
+        if (string.equals("[]")) {
+            userExit = false;
+            return false;
+        } else {
+            userExit = true;
+            return true;
+        }
+    }
+
+    // Get the count of credentials in NetBean
+    private class GetCountCredential extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            return okHttpConnection.getCountCredentials();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
+
+    // Get the count of person in NetBean
+    private class GetCountPerson extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void... voids) {
+            return okHttpConnection.getCountPerson();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
+
+    // Post new credential to NetBean
+    private class AddCredential extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String message = "The Credential with id " + strings[0] +" was added";
+            return okHttpConnection.addCredential(strings) + message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println(s);
+        }
+    }
+
+    // Add new credential
+    protected String[] credentialDetails() {
+        password = md5(password);
+        countCredential++;
+        String[] details = new String[]{Integer.toString(countCredential), password, currentDate(), email};
+        return details;
+    }
+
+    // Post new person to NetBean
+    private class AddPerson extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String message = "The Person with id " + strings[0] + " was added";
+            return okHttpConnection.addPerson(strings) + message;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            System.out.println(s);
+        }
+    }
+
+    // Add new person
+    protected String[] personDetails(String[] strings) {
+        countPerson++;
+        date = date+"T00:00:00+11:00";
+        String[] details = new String[] {Integer.toString(countPerson), firstName, lastName, gender, date, address, state, postcode, strings[0],strings[1],strings[2],strings[3]};
+        return details;
     }
 
     // Check password design, password should include digit and letter

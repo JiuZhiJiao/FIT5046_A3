@@ -11,7 +11,11 @@ public class Person {
     private String postcode;
     private Credential credentialsid;
 
-    public Person(int personid, String firstname, String surname, String gender, String dob, String address, String state, String postcode) {
+    public Person() {
+
+    }
+
+    public Person(int personid, String firstname, String surname, String gender, String dob, String address, String state, String postcode, Credential credentialsid) {
         this.personid = personid;
         this.firstname = firstname;
         this.surname = surname;
@@ -20,6 +24,7 @@ public class Person {
         this.address = address;
         this.state = state;
         this.postcode = postcode;
+        this.credentialsid = credentialsid;
     }
 
     public int getPersonid() {
