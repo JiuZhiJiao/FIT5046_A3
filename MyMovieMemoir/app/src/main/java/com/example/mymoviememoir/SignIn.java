@@ -3,6 +3,8 @@ package com.example.mymoviememoir;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -86,31 +88,16 @@ public class SignIn extends AppCompatActivity {
         }
     }
 
-    // Check password design, password should include digit and letter
-    public static boolean checkPassword(String password) {
-        boolean isDigit = false;
-        boolean isLetter = false;
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isDigit(password.charAt(i))) {
-                isDigit = true;
-            } else if (Character.isLowerCase(password.charAt(i)) || Character.isUpperCase(password.charAt(i))) {
-                isLetter = true;
-            }
-        }
-        return isDigit && isLetter;
-    }
-
     // Check password is right or not
     public boolean passwordRight(String password) {
         String passwordHash = "";
 
         // get passwordhash from result
         Gson gson = new Gson();
-        System.out.println(result);
         Credential[] credentials = gson.fromJson(result, Credential[].class);
 
         // transfer the input password with MD5
-        passwordHash = md5(password).substring(8,24);
+        passwordHash = md5(password);
 
         return passwordHash.equals(credentials[0].getPasswordhash());
     }
@@ -134,7 +121,7 @@ public class SignIn extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return result;
+        return result.substring(8,24);
     }
 
     // Toast
