@@ -41,6 +41,57 @@ public class OKHttpConnection {
         return results;
     }
 
+    public String findByCredentialsid (String id) {
+        final String path = "mymoviememoir.person/findByCredentialsid/" + id;
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.findByCredentialsid method runs wrong");
+        }
+        return results;
+    }
+
+    public String findByPersonId (String id) {
+        final String path = "mymoviememoir.memoir/findByPersonid/" + id;
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.findByPersonId method runs wrong");
+        }
+        return results;
+    }
+
+    public String findTopFiveMovies(String id) {
+        final String path = "mymoviememoir.memoir/topFiveMovies/" + id;
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.findTopFiveMovies method runs wrong");
+        }
+        return results;
+    }
+
     public String getCountCredentials() {
         final String path = "mymoviememoir.credentials/count";
 
