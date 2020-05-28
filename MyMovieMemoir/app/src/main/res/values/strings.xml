@@ -14,4 +14,12 @@
         <item>NT</item>
         <item>ACT</item>
     </string-array>
+    <string-array name="year">
+        <item>2015</item>
+        <item>2016</item>
+        <item>2017</item>
+        <item>2018</item>
+        <item>2019</item>
+        <item>2020</item>
+    </string-array>
 </resources>

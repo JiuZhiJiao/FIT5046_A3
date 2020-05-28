@@ -92,6 +92,40 @@ public class OKHttpConnection {
         return results;
     }
 
+    public String totalNumberByPostcode(String id, String start, String end) {
+        final String path = "mymoviememoir.memoir/totalNumberByCinemaPostcode/"+id+"/"+start+"/"+end;
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.totalNumberByPostcode method runs wrong");
+        }
+        return results;
+    }
+
+    public String totalNumberByWatchedMonth(String id, String year) {
+        final String path = "mymoviememoir.memoir/totalNumberByWatchedMonth/"+id+"/"+year;
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.totalNumberByWatchedMonth method runs wrong");
+        }
+        return results;
+    }
+
     public String getCountCredentials() {
         final String path = "mymoviememoir.credentials/count";
 

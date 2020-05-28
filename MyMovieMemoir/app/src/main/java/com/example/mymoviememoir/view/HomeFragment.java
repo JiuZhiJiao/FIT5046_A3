@@ -103,7 +103,6 @@ public class HomeFragment extends Fragment {
         Gson gson = new Gson();
         ArrayList<Map<String,Object>> topMaps = gson.fromJson(topFiveStr, new TypeToken<ArrayList<Map<String,Object>>>(){}.getType());
 
-
         ArrayList<HashMap<String,Object>> movieList = new ArrayList<>();
         for (Map<String,Object> m: topMaps) {
             HashMap<String,Object> map = new HashMap<>();
