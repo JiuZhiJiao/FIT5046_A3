@@ -16,7 +16,7 @@ public class Movie {
         this.id = id;
         this.name = name;
         this.date = date;
-        this.imagePath = "https://image.tmdb.org/t/p/w600_and_h900_bestv2/"+imagePath;
+        this.imagePath = "https://image.tmdb.org/t/p/w600_and_h900_bestv2"+imagePath;
         this.summary = summary;
         this.score = score;
     }

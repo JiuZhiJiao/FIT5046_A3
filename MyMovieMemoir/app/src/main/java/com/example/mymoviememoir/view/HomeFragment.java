@@ -120,6 +120,7 @@ public class HomeFragment extends Fragment {
 
 
 
+
         // Initial UI
         TextView textViewHi = getActivity().findViewById(R.id.home_tv_hi);
         TextView textViewDate = getActivity().findViewById(R.id.home_tv_current_date);

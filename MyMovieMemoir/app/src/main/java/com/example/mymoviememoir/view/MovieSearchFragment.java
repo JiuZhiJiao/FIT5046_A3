@@ -1,5 +1,6 @@
 package com.example.mymoviememoir.view;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -7,15 +8,18 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
 
 import com.example.mymoviememoir.R;
 import com.example.mymoviememoir.model.Movie;
@@ -86,6 +90,7 @@ public class MovieSearchFragment extends Fragment {
         final EditText editTextMovie = getActivity().findViewById(R.id.movie_search_et_name);
         Button buttonSearch = getActivity().findViewById(R.id.movie_search_bt_search);
         final SearchByName searchByName = new SearchByName();
+        final ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
 
         buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +107,16 @@ public class MovieSearchFragment extends Fragment {
                     e.printStackTrace();
                 }
                 addMovie(data);
+
+
+                for (Movie m: movies) {
+                    System.out.println(m.getName()+" "+m.getId() +" "+m.getImagePath());
+                }
+
+                MyAdapter myAdapter = new MyAdapter(getActivity(),movies,listView);
+                listView.setAdapter(myAdapter);
+
+
 
                 /*
                 HashMap<String, Object> hashMap = new HashMap<>();
@@ -152,6 +167,7 @@ public class MovieSearchFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            addMovie(s);
         }
     }
 
@@ -181,11 +197,9 @@ public class MovieSearchFragment extends Fragment {
 
     private class ImageDownload extends AsyncTask<String, Void, Bitmap> {
         private ImageView myImageView;
-        private String myUrl;
 
-        public ImageDownload(ImageView imageView, String url) {
+        public ImageDownload(ImageView imageView) {
             myImageView = imageView;
-            myUrl = url;
         }
 
         @Override
@@ -231,5 +245,65 @@ public class MovieSearchFragment extends Fragment {
         }
         return null;
     }
+
+    // Load Image
+    public class MyAdapter extends BaseAdapter {
+
+        List<Movie> list;
+        Context context;
+        LayoutInflater inflater;
+        ListView listView;
+
+        public MyAdapter(Context context, List<Movie> list, ListView listView) {
+            this.context = context;
+            this.list = list;
+            inflater = LayoutInflater.from(context);
+            this.listView = listView;
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return list.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            ViewHolder holder;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = inflater.inflate(R.layout.screen_movie_search_listview,parent,false);
+                holder.imageView = convertView.findViewById(R.id.movie_search_image);
+                holder.textViewName = convertView.findViewById(R.id.movie_search_lv_tv_name);
+                holder.textViewDate = convertView.findViewById(R.id.movie_search_lv_tv_date);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            new ImageDownload(holder.imageView).execute(list.get(position).getImagePath());
+            holder.textViewName.setText(list.get(position).getName());
+            holder.textViewDate.setText(list.get(position).getDate());
+
+            return convertView;
+        }
+    }
+
+    class ViewHolder {
+        ImageView imageView;
+        TextView textViewName;
+        TextView textViewDate;
+    }
+
 
 }

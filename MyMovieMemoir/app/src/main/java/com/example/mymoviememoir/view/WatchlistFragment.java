@@ -10,12 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.mymoviememoir.MainActivity;
 import com.example.mymoviememoir.R;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
-import java.net.MalformedURLException;
 
 public class WatchlistFragment extends Fragment {
 

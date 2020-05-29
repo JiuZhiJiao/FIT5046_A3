@@ -25,7 +25,7 @@
         android:layout_marginTop="18dp"
         android:layout_toEndOf="@+id/movie_search_image"
         android:text="Movie Name"
-        android:textSize="25dp"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_marginBottom="18dp"
         android:layout_toEndOf="@+id/movie_search_image"
         android:text="2020"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:textStyle="italic" />
 
 </RelativeLayout>
