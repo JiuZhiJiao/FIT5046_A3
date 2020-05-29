@@ -34,9 +34,14 @@ dependencies {
 
     // Navigation
     implementation 'com.google.android.material:material:1.1.0'
-    // OKhttp
+    // OKHttp
     implementation 'com.squareup.okhttp3:okhttp:4.5.0'
     implementation 'com.google.code.gson:gson:2.3'
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // Google Map
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    // Twitter
+    implementation 'com.twitter.sdk.android:twitter:3.0.0'
+    implementation 'com.twitter.sdk.android:tweet-composer:3.0.0'
 }

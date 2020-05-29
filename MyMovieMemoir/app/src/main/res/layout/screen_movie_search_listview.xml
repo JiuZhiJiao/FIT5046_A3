@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"/>
 
     <TextView
-        android:id="@+id/movie_search_tv_name"
+        android:id="@+id/movie_search_lv_tv_name"
         android:layout_width="210dp"
         android:layout_height="65dp"
         android:layout_alignTop="@+id/movie_search_image"
@@ -29,10 +29,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/movie_search_tv_date"
+        android:id="@+id/movie_search_lv_tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/movie_search_tv_name"
+        android:layout_below="@+id/movie_search_lv_tv_name"
         android:layout_alignBottom="@+id/movie_search_image"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"

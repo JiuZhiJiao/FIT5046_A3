@@ -2,10 +2,13 @@ package com.example.mymoviememoir.view;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -15,16 +18,38 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.mymoviememoir.R;
+import com.example.mymoviememoir.model.Movie;
+import com.example.mymoviememoir.network.OKHttpConnection;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
 
 public class MovieSearchFragment extends Fragment {
+
+    OKHttpConnection okHttpConnection = null;
+    int id;
+    String name;
+    String date;
+    String imagePath;
+    String summary;
+    double score;
+    ArrayList<Movie> movies;
 
     @Nullable
     @Override
@@ -38,6 +63,15 @@ public class MovieSearchFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        okHttpConnection = new OKHttpConnection();
+        id = 0;
+        name = "";
+        date = "";
+        imagePath = "";
+        summary = "";
+        score = 0;
+        movies = new ArrayList<>();
+
         /*
         // get data
 
@@ -49,6 +83,47 @@ public class MovieSearchFragment extends Fragment {
         listView.setAdapter(simpleAdapter);
 
          */
+        final EditText editTextMovie = getActivity().findViewById(R.id.movie_search_et_name);
+        Button buttonSearch = getActivity().findViewById(R.id.movie_search_bt_search);
+        final SearchByName searchByName = new SearchByName();
+
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // add search result to movies
+                String movieName = editTextMovie.getText().toString().trim();
+                movieName = movieName.replace(" ","%20");
+                String data = "";
+                try {
+                    data = searchByName.execute(movieName).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                addMovie(data);
+
+                /*
+                HashMap<String, Object> hashMap = new HashMap<>();
+                List<HashMap<String, Object>> movieDetail = new ArrayList<>();
+                for (Movie m: movies) {
+                    hashMap.put("image",getBitmapFromUrl(m.getImagePath()));
+                    hashMap.put("name",m.getName());
+                    hashMap.put("release",m.getDate());
+                    movieDetail.add(hashMap);
+                }
+
+
+                ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
+                String[] colHead = new String[] {"image","name","release"};
+                int[] dataCell = new int[] {R.id.movie_search_image,R.id.movie_search_lv_tv_name,R.id.movie_search_lv_tv_date};
+                SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(), movieDetail, R.layout.screen_movie_search_listview,colHead,dataCell);
+                listView.setAdapter(simpleAdapter);
+
+                 */
+            }
+        });
+
     }
 
     // Get image from url
@@ -63,6 +138,96 @@ public class MovieSearchFragment extends Fragment {
             return bitmap;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    private class SearchByName extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String name = strings[0];
+            return okHttpConnection.searchByName(name);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+    }
+
+    protected void addMovie(String data) {
+        try {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray jsonArray = jsonData.getJSONArray("results");
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject  jsonObject = jsonArray.getJSONObject(i);
+
+                if (jsonObject != null) {
+                    id = jsonObject.optInt("id");
+                    name = jsonObject.optString("title");
+                    date = jsonObject.optString("release_date");
+                    imagePath = jsonObject.optString("poster_path");
+                    summary = jsonObject.optString("overview");
+                    score = jsonObject.getDouble("vote_average");
+
+                    movies.add(new Movie(id,name,date,imagePath,summary,score));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class ImageDownload extends AsyncTask<String, Void, Bitmap> {
+        private ImageView myImageView;
+        private String myUrl;
+
+        public ImageDownload(ImageView imageView, String url) {
+            myImageView = imageView;
+            myUrl = url;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String url = strings[0];
+            Bitmap bitmap = getBitmapFromUrl(url);
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            myImageView.setImageBitmap(bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromUrl(String url) {
+        Bitmap bitmap;
+        InputStream inputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                return 0;
+            }
+        };
+
+        try {
+            URL myUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) myUrl.openConnection();
+            inputStream = new BufferedInputStream(connection.getInputStream());
+            bitmap = BitmapFactory.decodeStream(inputStream);
+            connection.disconnect();
+            return bitmap;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

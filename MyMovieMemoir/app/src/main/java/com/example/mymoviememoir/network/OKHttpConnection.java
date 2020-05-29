@@ -17,6 +17,8 @@ public class OKHttpConnection {
     private static final String BASE_URL = "http://192.168.0.77:8080/MyMovieMemoir/webresources/";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
+    private static final String BASE_MOVIEDB_URL = "https://api.themoviedb.org/3/search/movie?api_key=ad2a356160e5d42e7258fffe2f7f9f33&language=en-US&query=";
+
     private OkHttpClient client = null;
     private String results = "";
 
@@ -71,6 +73,23 @@ public class OKHttpConnection {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("OKHttpConnection.findByPersonId method runs wrong");
+        }
+        return results;
+    }
+
+    public String getAllCinema() {
+        final String path = "mymoviememoir.cinema/";
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.getAllCinema method runs wrong");
         }
         return results;
     }
@@ -203,6 +222,23 @@ public class OKHttpConnection {
         }
 
         return strResponse;
+    }
+
+    public String searchByName(String movieName) {
+        final String path = movieName+"&page=1&include_adult=false";
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_MOVIEDB_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.totalNumberByWatchedMonth method runs wrong");
+        }
+        return results;
     }
 
 

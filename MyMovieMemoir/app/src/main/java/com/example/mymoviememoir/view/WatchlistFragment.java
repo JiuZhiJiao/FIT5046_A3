@@ -10,7 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.mymoviememoir.MainActivity;
 import com.example.mymoviememoir.R;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+
+import java.net.MalformedURLException;
 
 public class WatchlistFragment extends Fragment {
 
@@ -22,4 +27,24 @@ public class WatchlistFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Send Twitter
+        Twitter.initialize(getActivity());
+        Button buttonShare = getActivity().findViewById(R.id.watchilist_bt_share);
+        buttonShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareToTwitter(v);
+            }
+        });
+    }
+
+    public void shareToTwitter(View view) {
+        // Set Twitter Content
+        TweetComposer.Builder builder = new TweetComposer.Builder(getActivity()).text("Twitter from mymoviememoir");
+        builder.show();
+    }
 }

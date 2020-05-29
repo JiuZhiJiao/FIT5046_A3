@@ -22,4 +22,6 @@
         <item>2019</item>
         <item>2020</item>
     </string-array>
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">oTD0pmjNStifUTnd3ATuuRItB</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">hgFEBLH4nmqDcqxUrh7HDpQS5CLYUb1MAnI45T9Wl6cXraMs1n</string>
 </resources>

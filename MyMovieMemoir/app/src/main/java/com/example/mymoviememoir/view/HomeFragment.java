@@ -112,9 +112,6 @@ public class HomeFragment extends Fragment {
             movieList.add(map);
         }
 
-        for (HashMap<String,Object> m : movieList) {
-            System.out.println(m);
-        }
         ListView listView = getActivity().findViewById(R.id.home_list_view);
         String[] colHead = new String[] {"movieName","releaseYear","ratingScore"};
         int[] dataCell = new int[] {R.id.home_lv_tv_name,R.id.home_lv_tv_release_date,R.id.home_lv_tv_score};

@@ -29,6 +29,12 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAqce1a0_fpFc7VP2CU3Kj6HaPsEVGBBWw" />
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
+
     </application>
 
 </manifest>

@@ -11,7 +11,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/watchilist_bt_delete"
-        android:text="Delete" />
+        android:id="@+id/watchilist_bt_share"
+        android:text="Share" />
 
 </LinearLayout>
