@@ -27,6 +27,8 @@ import com.example.mymoviememoir.model.Credential;
 import com.example.mymoviememoir.model.Person;
 import com.example.mymoviememoir.network.OKHttpConnection;
 import com.google.gson.Gson;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,9 +150,9 @@ public class MovieMemoirFragment extends Fragment {
         // List Listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HashMap<String,Object> hashMap = fullMemoirs.get(position);
-                String title = hashMap.get("name").toString();
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                final HashMap<String,Object> hashMap = fullMemoirs.get(position);
+                final String title = hashMap.get("name").toString();
                 String score = "                                   Public Score: "+hashMap.get("publicScore").toString();
                 score += "/10";
                 String summary = "Overview: "+hashMap.get("summary").toString();
@@ -160,11 +162,30 @@ public class MovieMemoirFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
+                }).setPositiveButton("Share To Twitter", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Share to Twitter
+                        String sharedTitle = "Movie Name: " + title + ". ";
+                        String sharedScore = "My Personal Score: " + hashMap.get("userScore").toString() + "/5. ";
+                        String sharedComment = hashMap.get("comment").toString();
+                        String sharedUser = "     ---From: "+person.getFirstname();
+                        String sharedInfo = sharedTitle + sharedScore + sharedComment + sharedUser;
+                        Twitter.initialize(getActivity());
+                        shareToTwitter(view,sharedInfo);
+                    }
                 }).create();
                 alertDialog.show();
             }
         });
 
+    }
+
+    //Send To Twitter
+    public void shareToTwitter(View view, String info) {
+        // Set Twitter Content
+        TweetComposer.Builder builder = new TweetComposer.Builder(getActivity()).text(info);
+        builder.show();
     }
 
     // order

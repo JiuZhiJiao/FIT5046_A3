@@ -34,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -141,6 +142,29 @@ public class MovieViewFragment extends Fragment {
                 editor.putInt("id",id);
                 editor.apply();
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new MovieMemoirAddFragment()).commit();
+            }
+        });
+
+        buttonWatchlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH) + 1;
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                String current = year + "-" + month + "-" + day + "  " + hour + ":" + minute;
+
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromMovieViewByWatchlist", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("name",name);
+                editor.putString("release",release);
+                editor.putString("current",current);
+                editor.putInt("id",id);
+                editor.apply();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new WatchlistFragment()).commit();
             }
         });
 
