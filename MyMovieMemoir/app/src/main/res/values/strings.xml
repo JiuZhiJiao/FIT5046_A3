@@ -4,6 +4,7 @@
     <string name="sign_up_title">Sign Up</string>
     <string name="NavOpen">open</string>
     <string name="NavClose">close</string>
+
     <string-array name="states">
         <item>WA</item>
         <item>QLD</item>
@@ -14,6 +15,7 @@
         <item>NT</item>
         <item>ACT</item>
     </string-array>
+
     <string-array name="year">
         <item>2015</item>
         <item>2016</item>
@@ -22,6 +24,14 @@
         <item>2019</item>
         <item>2020</item>
     </string-array>
+
+    <string-array name="sort">
+        <item>Default</item>
+        <item>Watched Date</item>
+        <item>User Score</item>
+        <item>Public Score</item>
+    </string-array>
+
     <string name="com.twitter.sdk.android.CONSUMER_KEY">oTD0pmjNStifUTnd3ATuuRItB</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET">hgFEBLH4nmqDcqxUrh7HDpQS5CLYUb1MAnI45T9Wl6cXraMs1n</string>
 </resources>

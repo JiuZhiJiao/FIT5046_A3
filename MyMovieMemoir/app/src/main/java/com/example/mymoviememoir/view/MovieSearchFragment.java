@@ -93,7 +93,6 @@ public class MovieSearchFragment extends Fragment {
          */
         final EditText editTextMovie = getActivity().findViewById(R.id.movie_search_et_name);
         Button buttonSearch = getActivity().findViewById(R.id.movie_search_bt_search);
-        final SearchByName searchByName = new SearchByName();
         final ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
 
         buttonSearch.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +103,13 @@ public class MovieSearchFragment extends Fragment {
                 movieName = movieName.replace(" ","%20");
                 String data = "";
                 try {
-                    data = searchByName.execute(movieName).get();
+                    data = new SearchByName().execute(movieName).get();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                movies = new ArrayList<>();
                 addMovie(data);
 
 
@@ -135,6 +135,7 @@ public class MovieSearchFragment extends Fragment {
                         editor.putInt("id",movie.getId());
                         editor.apply();
                         MovieViewFragment movieViewFragment = new MovieViewFragment();
+                        // This bundle let Movie View Screen to check which fragment from
                         Bundle bundle = new Bundle();
                         bundle.putString("sourceFrom","MovieSearch");
                         movieViewFragment.setArguments(bundle);
@@ -175,7 +176,7 @@ public class MovieSearchFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            addMovie(s);
+            //addMovie(s);
         }
     }
 

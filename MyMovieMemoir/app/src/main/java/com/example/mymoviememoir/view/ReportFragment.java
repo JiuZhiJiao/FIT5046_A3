@@ -113,6 +113,7 @@ public class ReportFragment extends Fragment {
                                 } else {
                                     startDate = year + "-" + month + "-" + dayOfMonth;
                                 }
+                                textViewStart.setText(startDate);
                             }
                         }, mYear,mMonth,mDay);
                 dialog.show();
@@ -146,6 +147,7 @@ public class ReportFragment extends Fragment {
                                 } else {
                                     endDate = year + "-" + month + "-" + dayOfMonth;
                                 }
+                                textViewEnd.setText(endDate);
                             }
                         }, mYear,mMonth,mDay);
                 dialog.show();

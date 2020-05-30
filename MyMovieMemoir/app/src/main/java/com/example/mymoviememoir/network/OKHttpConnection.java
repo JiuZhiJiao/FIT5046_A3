@@ -2,7 +2,9 @@ package com.example.mymoviememoir.network;
 
 import android.util.Log;
 
+import com.example.mymoviememoir.model.Cinema;
 import com.example.mymoviememoir.model.Credential;
+import com.example.mymoviememoir.model.Memoir;
 import com.example.mymoviememoir.model.Person;
 import com.google.gson.Gson;
 
@@ -179,6 +181,23 @@ public class OKHttpConnection {
         return results;
     }
 
+    public String getCountMemoir() {
+        final String path = "mymoviememoir.memoir/count";
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(BASE_URL+path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.getCountPerson method runs wrong");
+        }
+        return results;
+    }
+
     public String addCredential(String[] details) {
         Credential credential = new Credential(Integer.parseInt(details[0]),details[1],details[2],details[3]);
 
@@ -223,6 +242,55 @@ public class OKHttpConnection {
 
         return strResponse;
     }
+
+    public String addMemoir(String[] details) {
+        Cinema cinema = new Cinema(Integer.parseInt(details[0]),details[1],details[2]);
+        Credential credential = new Credential(Integer.parseInt(details[3]),details[4],details[5],details[6]);
+        Person person = new Person(Integer.parseInt(details[7]),details[8],details[9],details[10],details[11],details[12],details[13],details[14],credential);
+        Memoir memoir = new Memoir(Integer.parseInt(details[15]),details[16],details[17],details[18],details[19],Double.parseDouble(details[20]),person,cinema);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(memoir);
+        String strResponse = "";
+
+        Log.i("addMemoir ",json);
+
+        final String path = "mymoviememoir.memoir/";
+        RequestBody requestBody = RequestBody.create(json, JSON);
+        Request request = new Request.Builder().url(BASE_URL+path).post(requestBody).build();
+        try {
+            Response response = client.newCall(request).execute();
+            strResponse = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return strResponse;
+
+    }
+
+    public String addCinema(String[] cinema) {
+        Cinema cin = new Cinema(Integer.parseInt(cinema[0]),cinema[1],cinema[2]);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(cin);
+        String strResponse = "";
+
+        Log.i("addCinema", json);
+
+        final String path = "mymoviememoir.cinema/";
+        RequestBody requestBody = RequestBody.create(json, JSON);
+        Request request = new Request.Builder().url(BASE_URL+path).post(requestBody).build();
+        try {
+            Response response = client.newCall(request).execute();
+            strResponse = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return strResponse;
+    }
+
 
     public String searchByName(String movieName) {
         final String path = movieName+"&page=1&include_adult=false";

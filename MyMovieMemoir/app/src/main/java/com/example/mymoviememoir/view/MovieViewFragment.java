@@ -88,12 +88,15 @@ public class MovieViewFragment extends Fragment {
         RatingBar ratingBar = getActivity().findViewById(R.id.movie_view_rating_bar);
         ImageDownload imageDownload = new ImageDownload(imageView);
 
+        Button buttonWatchlist = getActivity().findViewById(R.id.movie_view_watchlist);
+        Button buttonMemoir = getActivity().findViewById(R.id.movie_view_memoir);
+
         GetGenreCountryById getGenreCountryById = new GetGenreCountryById(textViewGenre,textViewCountry);
         GetCastDirectorById getCastDirectorById = new GetCastDirectorById(textViewCast,textViewDirector);
 
         // Set source
         sourceFrom = getArguments().getString("sourceFrom");
-        if (sourceFrom == "MovieSearch") {
+        if (sourceFrom.equals("MovieSearch")) {
             // Get Info from movie search
             sharedPreferences = getActivity().getSharedPreferences("MessageFromSearch", Context.MODE_PRIVATE);
             name = sharedPreferences.getString("name",null);
@@ -116,7 +119,7 @@ public class MovieViewFragment extends Fragment {
 
              */
         } else {
-
+            buttonWatchlist.setEnabled(false);
         }
 
         // Set UI
@@ -126,9 +129,6 @@ public class MovieViewFragment extends Fragment {
         textViewDate.setText(release);
         textViewSummary.setText("Summary: " + summary);
         ratingBar.setRating(score.floatValue());
-
-        Button buttonWatchlist = getActivity().findViewById(R.id.movie_view_watchlist);
-        Button buttonMemoir = getActivity().findViewById(R.id.movie_view_memoir);
 
         buttonMemoir.setOnClickListener(new View.OnClickListener() {
             @Override

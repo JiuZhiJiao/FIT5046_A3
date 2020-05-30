@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/movie_memoir_image"
+        android:layout_width="100dp"
+        android:layout_height="160dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/movie_memoir_title"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/movie_memoir_image"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/movie_memoir_image"
+        android:text="Movie Name"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/movie_memoir_release_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_memoir_title"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/movie_memoir_image"
+        android:textStyle="italic"
+        android:text="Release Date"/>
+
+    <TextView
+        android:id="@+id/movie_memoir_watched_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_memoir_release_date"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/movie_memoir_image"
+        android:textStyle="italic"
+        android:text="Watched Date"/>
+
+    <TextView
+        android:id="@+id/movie_memoir_lv_postcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_memoir_watched_date"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/movie_memoir_rating_bar"
+        android:textStyle="italic"
+        android:text="Postcode"/>
+
+    <RatingBar
+        android:id="@+id/movie_memoir_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:rating="3"
+        android:isIndicator="true"
+        android:theme="@style/RatingStart"
+        style="?android:ratingBarStyleSmall"
+        android:layout_below="@+id/movie_memoir_watched_date"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/movie_memoir_image"
+        android:layout_marginStart="32dp"/>
+
+    <TextView
+        android:id="@+id/movie_memoir_comment"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/movie_memoir_rating_bar"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@+id/movie_memoir_image"
+        android:layout_marginStart="32dp"/>
+
+
+
+</RelativeLayout>
