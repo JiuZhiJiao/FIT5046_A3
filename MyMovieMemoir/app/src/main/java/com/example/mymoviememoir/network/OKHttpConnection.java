@@ -241,5 +241,39 @@ public class OKHttpConnection {
         return results;
     }
 
+    public String getGenreCountryById(String id) {
+        final String path = "https://api.themoviedb.org/3/movie/"+id+"?api_key=ad2a356160e5d42e7258fffe2f7f9f33&language=en-US";
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.totalNumberByWatchedMonth method runs wrong");
+        }
+        return results;
+    }
+
+    public String getCastDirectorById(String id) {
+        final String path = "https://api.themoviedb.org/3/movie/"+id+"/credits?api_key=ad2a356160e5d42e7258fffe2f7f9f33";
+
+        Request.Builder builder = new Request.Builder();
+        builder.url(path);
+        Request request = builder.build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            results = response.body().string();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OKHttpConnection.totalNumberByWatchedMonth method runs wrong");
+        }
+        return results;
+    }
+
 
 }

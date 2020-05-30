@@ -38,6 +38,29 @@ public class WatchlistFragment extends Fragment {
                 shareToTwitter(v);
             }
         });
+
+        /*
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Movie movie = movies.get(position);
+                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromSearch", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("name",movie.getName());
+                        editor.putString("release",movie.getDate());
+                        editor.putString("imagePath",movie.getImagePath());
+                        editor.putString("summary",movie.getSummary());
+                        editor.putString("score",movie.getScore().toString());
+                        editor.putInt("id",movie.getId());
+                        editor.apply();
+                        MovieViewFragment movieViewFragment = new MovieViewFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("sourceFrom","Watchlist");
+                        movieViewFragment.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,movieViewFragment).commit();
+                      }
+                });
+         */
     }
 
     public void shareToTwitter(View view) {
