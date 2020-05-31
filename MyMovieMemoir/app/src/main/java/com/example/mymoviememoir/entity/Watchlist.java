@@ -2,6 +2,7 @@ package com.example.mymoviememoir.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -19,6 +20,13 @@ public class Watchlist {
     @ColumnInfo(name = "added_date")
     public String addedDate;
 
+    public Watchlist(String movieName, String releaseDate, String addedDate) {
+        this.movieName = movieName;
+        this.releaseDate = releaseDate;
+        this.addedDate = addedDate;
+    }
+
+    @Ignore
     public Watchlist(int uid, String movieName, String releaseDate, String addedDate) {
         this.uid = uid;
         this.movieName = movieName;

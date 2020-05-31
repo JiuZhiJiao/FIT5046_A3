@@ -56,4 +56,8 @@ public class WatchlistViewModel extends ViewModel {
         return cRepository.findByID(watchlistId);
     }
 
+    public Watchlist findByName(String name) {
+        return cRepository.findByName(name);
+    }
+
 }

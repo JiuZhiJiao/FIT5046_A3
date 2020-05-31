@@ -13,14 +13,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mymoviememoir.R;
+import com.example.mymoviememoir.entity.Watchlist;
 import com.example.mymoviememoir.model.Movie;
 import com.example.mymoviememoir.network.OKHttpConnection;
+import com.example.mymoviememoir.viewmodel.WatchlistViewModel;
 import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
@@ -36,6 +40,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
@@ -52,6 +57,9 @@ public class MovieViewFragment extends Fragment {
     List<String> genre;
     String country;
     String sourceFrom;
+    Movie movie;
+    String date;
+    WatchlistViewModel watchlistViewModel;
 
     @Nullable
     @Override
@@ -75,6 +83,12 @@ public class MovieViewFragment extends Fragment {
         genre = new ArrayList<>();
         country = "";
         sourceFrom = "";
+        movie = new Movie();
+        date = "";
+
+        watchlistViewModel = new ViewModelProvider(this).get(WatchlistViewModel.class);
+        watchlistViewModel.initializeVars(getActivity().getApplication());
+
 
 
         // Get UI
@@ -121,6 +135,23 @@ public class MovieViewFragment extends Fragment {
              */
         } else {
             buttonWatchlist.setEnabled(false);
+            sharedPreferences = getActivity().getSharedPreferences("MessageFromWatchlist", Context.MODE_PRIVATE);
+            name = sharedPreferences.getString("name",null);
+            String data = "";
+            try {
+                data = new SearchByName().execute(name).get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            addMovie(data);
+            release = movie.getDate();
+            imagePath = movie.getImagePath();
+            summary = movie.getSummary();
+            score = movie.getScore()*0.5;
+            getGenreCountryById.execute(String.valueOf(movie.getId()));
+            getCastDirectorById.execute(String.valueOf(movie.getId()));
         }
 
         // Set UI
@@ -157,17 +188,56 @@ public class MovieViewFragment extends Fragment {
                 int minute = calendar.get(Calendar.MINUTE);
                 String current = year + "-" + month + "-" + day + "  " + hour + ":" + minute;
 
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromMovieViewByWatchlist", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("name",name);
-                editor.putString("release",release);
-                editor.putString("current",current);
-                editor.putInt("id",id);
-                editor.apply();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new WatchlistFragment()).commit();
+                if (watchlistViewModel.findByName(name) != null) {
+                    sendToast("The Movie Has Been In Watchlist");
+                } else {
+                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromMovieViewByWatchlist", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("name",name);
+                    editor.putString("release",release);
+                    editor.putString("current",current);
+                    editor.putInt("id",id);
+                    editor.apply();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new WatchlistFragment()).commit();
+                }
             }
         });
 
+    }
+
+    private class SearchByName extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String name = strings[0];
+            return okHttpConnection.searchByName(name);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //addMovie(s);
+        }
+    }
+
+    protected void addMovie(String data) {
+        try {
+            JSONObject jsonData = new JSONObject(data);
+            JSONArray jsonArray = jsonData.getJSONArray("results");
+
+            JSONObject  jsonObject = jsonArray.getJSONObject(0);
+            if (jsonObject != null) {
+                id = jsonObject.optInt("id");
+                name = jsonObject.optString("title");
+                date = jsonObject.optString("release_date");
+                imagePath = jsonObject.optString("poster_path");
+                summary = jsonObject.optString("overview");
+                score = jsonObject.getDouble("vote_average");
+
+                movie = new Movie(id,name,date,imagePath,summary,score);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private class GetGenreCountryById extends AsyncTask<String, Void, String>{
@@ -341,5 +411,10 @@ public class MovieViewFragment extends Fragment {
             }
         }
         return null;
+    }
+
+    // Toast
+    protected void sendToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 }

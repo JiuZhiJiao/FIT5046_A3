@@ -22,6 +22,9 @@ public interface WatchlistDAO {
     @Query("SELECT * FROM watchlist WHERE uid = :watchlistId LIMIT 1")
     Watchlist findByID(int watchlistId);
 
+    @Query("SELECT * FROM watchlist WHERE movie_name = :name LIMIT 1")
+    Watchlist findByName(String name);
+
     @Insert
     void insertAll(Watchlist... watchlists);
 

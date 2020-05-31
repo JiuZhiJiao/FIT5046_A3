@@ -14,7 +14,7 @@ public class WatchlistRepository {
 
     private WatchlistDAO dao;
     private LiveData<List<Watchlist>> allWatchlist;
-    private Watchlist watchlist;
+    private Watchlist mWatchlist;
 
     public WatchlistRepository(Application application) {
         WatchlistDatabase db = WatchlistDatabase.getInstance(application);
@@ -72,7 +72,7 @@ public class WatchlistRepository {
     }
 
     public void setWatchlist(Watchlist watchlist) {
-        this.watchlist = watchlist;
+        this.mWatchlist = watchlist;
     }
 
     public Watchlist findByID(final int watchlistId) {
@@ -83,7 +83,18 @@ public class WatchlistRepository {
                 setWatchlist(watchlist);
             }
         });
-        return watchlist;
+        return mWatchlist;
+    }
+
+    public Watchlist findByName(final String name) {
+        WatchlistDatabase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Watchlist watchlist = dao.findByName(name);
+                setWatchlist(watchlist);
+            }
+        });
+        return mWatchlist;
     }
 
 }
