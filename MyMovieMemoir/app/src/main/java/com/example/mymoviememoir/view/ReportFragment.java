@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,7 +24,6 @@ import com.example.mymoviememoir.network.OKHttpConnection;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -63,7 +61,6 @@ public class ReportFragment extends Fragment {
     String startDate;
     String endDate;
 
-
     Calendar calendar;
     int mYear;
     int mMonth;
@@ -81,11 +78,11 @@ public class ReportFragment extends Fragment {
         updateInfo(findByCredentialId);
         personId = Integer.toString(person.getPersonid());
 
-        // get input from UI
+        // get UI
         final TextView textViewStart = getActivity().findViewById(R.id.report_tv_start);
         final TextView textViewEnd = getActivity().findViewById(R.id.report_tv_end);
 
-
+        // Set StartDate, the default start date is 2000-01-01
         startDate = "2000-01-01";
         textViewStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +117,7 @@ public class ReportFragment extends Fragment {
             }
         });
 
+        // Set EndDate, the default end date is 2020-01-01
         endDate = "2020-01-01";
         textViewEnd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,9 +152,6 @@ public class ReportFragment extends Fragment {
             }
         });
 
-
-
-
         // Get year from spinner
         year = "";
         final Spinner spinner = getActivity().findViewById(R.id.report_spinner);
@@ -171,10 +166,6 @@ public class ReportFragment extends Fragment {
 
             }
         });
-
-
-
-
 
         // generate pie chart
         final PieChart pieChart = getActivity().findViewById(R.id.report_pie_chart);
@@ -200,10 +191,6 @@ public class ReportFragment extends Fragment {
                 Gson gson = new Gson();
                 Type type = new TypeToken<List<Map<String,String>>>(){}.getType();
                 List<Map<String,String>> dataList = gson.fromJson(data,type);
-
-                for (Map<String,String> m : dataList) {
-                    System.out.println(m.toString());
-                }
 
                 List<PieEntry> entries = new ArrayList<>();
                 for (Map<String,String> m : dataList) {
@@ -234,8 +221,6 @@ public class ReportFragment extends Fragment {
             }
         });
 
-
-
         // generate bar chart
         final BarChart barChart = getActivity().findViewById(R.id.report_bar_chart);
         Button buttonBar = getActivity().findViewById(R.id.report_bt_bar);
@@ -256,10 +241,6 @@ public class ReportFragment extends Fragment {
                 Type type = new TypeToken<List<Map<String,String>>>(){}.getType();
                 List<Map<String,String>> dataList = gson.fromJson(data,type);
 
-                for (Map<String,String> m : dataList) {
-                    System.out.println(m.toString());
-                }
-
                 List<BarEntry> entries = new ArrayList<>();
                 for (Map<String,String> m : dataList) {
                     entries.add(new BarEntry(Integer.parseInt(m.get("month")),Integer.parseInt(m.get("totalnumber"))));
@@ -269,32 +250,18 @@ public class ReportFragment extends Fragment {
                 barDataSet.setColors(Color.parseColor("#feb64d"),Color.parseColor("#ff7c7c"), Color.parseColor("#9287e7"), Color.parseColor("#60acfc"));
 
                 BarData barData = new BarData(barDataSet);
-
                 barData.setBarWidth(0.5f);
 
                 barChart.setData(barData);
-
                 // change description
                 Description description = new Description();
                 description.setText("Bar Chart");
                 barChart.setDescription(description);
-
                 barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-
                 barChart.invalidate();
 
             }
         });
-
-
-
-
-
-
-
-
-        System.out.println(credential.getUsername());
-        System.out.println(person.getFirstname());
 
     }
 
@@ -363,10 +330,5 @@ public class ReportFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
         }
-    }
-
-    // Toast
-    protected void sendToast(String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
 }

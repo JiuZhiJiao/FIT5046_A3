@@ -42,7 +42,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MovieMemoirAddFragment extends Fragment {
@@ -97,7 +96,6 @@ public class MovieMemoirAddFragment extends Fragment {
         cinemaPostcode = "";
         comment = "";
         ratingScore = 0.0;
-        //cinemas = new Cinema[];
         id = 0;
         memoirId = 0;
 
@@ -154,6 +152,7 @@ public class MovieMemoirAddFragment extends Fragment {
         mHour = calendar.get(Calendar.HOUR_OF_DAY);
         mMinute = calendar.get(Calendar.MINUTE);
 
+        // Set Date Picker
         textViewDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,13 +175,28 @@ public class MovieMemoirAddFragment extends Fragment {
             }
         });
 
+        // Set Time Picker
         textViewTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        time = String.valueOf(hourOfDay)+":"+String.valueOf(minute)+":00";
+
+                        String hourStr = "";
+                        String minuteStr = "";
+                        if (hourOfDay > 10) {
+                            hourStr = String.valueOf(hourOfDay);
+                        } else {
+                            hourStr = "0"+String.valueOf(hourOfDay);
+                        }
+                        if (minute > 10) {
+                            minuteStr = String.valueOf(minute);
+                        } else {
+                            minuteStr = "0"+String.valueOf(minute);
+                        }
+
+                        time = hourStr+":"+minuteStr+":00";
                         textViewTime.setText(time);
                     }
                 },mHour,mMinute,true).show();
@@ -201,8 +215,6 @@ public class MovieMemoirAddFragment extends Fragment {
                 cinemaId = position+1;
                 cinemaPostcode = cinemaSelList[0];
                 cinemaName = cinemaSelList[1];
-                System.out.println(cinemaName);
-                System.out.println(cinemaId);
             }
 
             @Override
@@ -211,7 +223,7 @@ public class MovieMemoirAddFragment extends Fragment {
             }
         });
 
-        // Get Person
+        // Get Person Information from sign in or sign up
         credential = new Credential();
         person = new Person();
         FindByCredentialId findByCredentialId = new FindByCredentialId();
@@ -247,34 +259,31 @@ public class MovieMemoirAddFragment extends Fragment {
         }
         memoirId = Integer.parseInt(countMemoir) + 1;
 
+        // Add new memoir to NetBean
         buttonMemoir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 comment = editTextComment.getText().toString().trim();
                 Float score = ratingBar.getRating();
                 ratingScore = score.doubleValue();
-                //System.out.println(memoirId+name+release+date+" "+time+".0"+comment+ratingScore+personId+cinemaId);
                 String[] strings = setStrMemoir(setStrPerson(setStrCredential(setStrCinema())));
-                /*
-                Boolean checkEmpty = true;
+
+                // check input empty
+                boolean check = false;
                 for (String s: strings) {
-                    if (s.isEmpty()) {
-                        checkEmpty = false;
-                        break;
-                    }
+                    if (s.equals(""))
+                        check = true;
                 }
-                if (checkEmpty) {
+
+                if (check) {
+                    sendToast("Please Enter All Information");
+                } else {
                     new AddNewMemoir().execute(strings);
                     sendToast("Memoir Added");
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new MovieMemoirFragment()).commit();
-                } else {
-                    sendToast("You Should Add All Information");
                 }
 
-                 */
-                new AddNewMemoir().execute(strings);
-                sendToast("Memoir Added");
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,new MovieMemoirFragment()).commit();
+
             }
         });
 
@@ -309,8 +318,6 @@ public class MovieMemoirAddFragment extends Fragment {
 
             }
         });
-
-
 
 
     }

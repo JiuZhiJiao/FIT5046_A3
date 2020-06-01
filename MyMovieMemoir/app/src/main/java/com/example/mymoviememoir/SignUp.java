@@ -168,7 +168,7 @@ public class SignUp extends AppCompatActivity {
 
                 // Check Enter is empty or not
                 if (validation(firstName,email,password)) {
-                    // check user exist
+                    // check user exist in database
                     findByUsername.execute(email);
                     if (!userExit) {
 
@@ -197,7 +197,7 @@ public class SignUp extends AppCompatActivity {
                         String[] detailPerson = personDetails(detailCredential);
                         addPerson.execute(detailPerson);
 
-                        //pass person
+                        //pass person info
                         Credential credential = new Credential(countCredential, password, currentDate(), email);
                         Person person = new Person(countPerson, firstName, lastName, gender, date, address, state, postcode, credential);
                         Bundle bundle = new Bundle();
@@ -303,7 +303,7 @@ public class SignUp extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            System.out.println(s);
+            super.onPostExecute(s);
         }
     }
 
@@ -325,7 +325,7 @@ public class SignUp extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            System.out.println(s);
+            super.onPostExecute(s);
         }
     }
 
@@ -351,7 +351,7 @@ public class SignUp extends AppCompatActivity {
         return isDigit && isLetter;
     }
 
-    // transfer with MD5
+    // encryption with MD5
     protected String md5(String originalStr) {
         MessageDigest messageDigest = null;
         String result = "";

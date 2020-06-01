@@ -41,7 +41,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -77,7 +76,7 @@ public class MovieMemoirFragment extends Fragment {
         memoirs = new ArrayList<>();
         fullMemoirs = new ArrayList<>();
 
-        // Get Person
+        // Get Person Information from sign in or sign up
         credential = new Credential();
         person = new Person();
         FindByCredentialId findByCredentialId = new FindByCredentialId();
@@ -111,11 +110,8 @@ public class MovieMemoirFragment extends Fragment {
         }
         addMemoir(netBeanData);
         setFullMemoir();
-        for (HashMap<String,Object> hashMap: fullMemoirs) {
-            System.out.println(hashMap.get("imagePath"));
-        }
 
-        // Set List
+        // Set List View With BaseAdapter
         final ListView listView = getActivity().findViewById(R.id.movie_memoir_list_view);
         MyAdapter myAdapter = new MyAdapter(getActivity(),fullMemoirs,listView);
         listView.setAdapter(myAdapter);
@@ -147,7 +143,7 @@ public class MovieMemoirFragment extends Fragment {
             }
         });
 
-        // List Listener
+        // List Listener, user can get more information by taping different movie
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
@@ -165,7 +161,7 @@ public class MovieMemoirFragment extends Fragment {
                 }).setPositiveButton("Share To Twitter", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Share to Twitter
+                        // Share the user personal memoir to Twitter
                         String sharedTitle = "Movie Name: " + title + ". ";
                         String sharedScore = "My Personal Score: " + hashMap.get("userScore").toString() + "/5. ";
                         String sharedComment = hashMap.get("comment").toString();
@@ -258,34 +254,12 @@ public class MovieMemoirFragment extends Fragment {
 
     protected void addMemoir(String data) {
         try {
-            /*
-            JSONObject jsonObject = new JSONObject(data);
-            JSONArray jsonArray = jsonObject.getJSONArray("cinemaid");
-
-             */
             JSONArray jsonArrayInfo = new JSONArray(data);
-            /*
-            JSONArray jsonArrayName = jsonObject.getJSONArray("moviename");
-            JSONArray jsonArrayReleaseDate = jsonObject.getJSONArray("releasedate");
-            JSONArray jsonArrayWatchedDate = jsonObject.getJSONArray("watchedtime");
-            JSONArray jsonArrayComment = jsonObject.getJSONArray("comment");
-            JSONArray jsonArrayScore = jsonObject.getJSONArray("ratingscore");
 
-             */
-
-            // get postcode
+            // set memoirs for current person
             for (int i = 0; i < jsonArrayInfo.length(); i++) {
-                //JSONObject postcode = jsonArray.getJSONObject(i);
                 JSONObject info = jsonArrayInfo.getJSONObject(i);
                 JSONObject cinemainfo = info.getJSONObject("cinemaid");
-                /*
-                JSONObject moviename = jsonArrayName.getJSONObject(i);
-                JSONObject releasedate = jsonArrayReleaseDate.getJSONObject(i);
-                JSONObject watcheddate = jsonArrayWatchedDate.getJSONObject(i);
-                JSONObject comment = jsonArrayComment.getJSONObject(i);
-                JSONObject score = jsonArrayScore.getJSONObject(i);
-
-                 */
 
                 if (info != null) {
                     HashMap<String,Object> map = new HashMap<>();
@@ -304,6 +278,7 @@ public class MovieMemoirFragment extends Fragment {
         }
     }
 
+    // Set all information this screen needs
     protected void setFullMemoir() {
         for (HashMap<String, Object> hashMap: memoirs) {
             String[] strings = getExtraInfo(hashMap.get("moviename").toString());
@@ -325,6 +300,7 @@ public class MovieMemoirFragment extends Fragment {
         }
     }
 
+    // Get ExtraInfo from movie api
     private String[] getExtraInfo(String name) {
         String s = "";
         try {

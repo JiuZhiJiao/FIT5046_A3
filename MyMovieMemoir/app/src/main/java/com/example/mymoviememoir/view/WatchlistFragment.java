@@ -19,15 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mymoviememoir.R;
-import com.example.mymoviememoir.database.WatchlistDatabase;
 import com.example.mymoviememoir.entity.Watchlist;
 import com.example.mymoviememoir.viewmodel.WatchlistViewModel;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +31,6 @@ import java.util.List;
 
 public class WatchlistFragment extends Fragment {
 
-    WatchlistDatabase db = null;
     WatchlistViewModel watchlistViewModel;
     SharedPreferences sharedPreferences;
     String name;
@@ -63,8 +58,8 @@ public class WatchlistFragment extends Fragment {
         current = "";
         watchlist = new Watchlist(name,release,current);
         watchlistList = new ArrayList<>();
-        boolean checkExist = false;
 
+        // Get info from movie view when user click add to watchlist button
         final ListView listView = getActivity().findViewById(R.id.watchlist_list_view);
         sharedPreferences = getActivity().getSharedPreferences("MessageFromMovieViewByWatchlist", Context.MODE_PRIVATE);
         name = sharedPreferences.getString("name",null);
@@ -85,36 +80,14 @@ public class WatchlistFragment extends Fragment {
             }
         });
 
-        // Add New Watchlist
-        /*
-        if (watchlistViewModel.getAllWatchlist().getValue() != null) {
-            for (Watchlist w: watchlistViewModel.getAllWatchlist().getValue()) {
-                if (w.getUid() == id)
-                    checkExist = true;
-            }
-        }
-        if (!checkExist)
-
-         */
-        /*
-        for (Watchlist w: watchlistList) {
-            if (!w.getMovieName().equals(name))
-                watchlistViewModel.insert(watchlist);
-        }
-
-         */
-
+        // Add the movie to watchlist
         watchlistViewModel.insert(watchlist);
 
-
-        //System.out.println(watchlistList.get(0).getMovieName());
-
+        // Get the position that user tap in list view
         final int[] selectedPosition = {0};
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println(position);
-                System.out.println(watchlistList.toString());
                 id = watchlistList.get(position).getUid();
                 name = watchlistList.get(position).getMovieName();
                 release = watchlistList.get(position).getReleaseDate();
@@ -125,7 +98,7 @@ public class WatchlistFragment extends Fragment {
             }
         });
 
-
+        // turn to movie view
         Button buttonView = getActivity().findViewById(R.id.watchlist_view);
         buttonView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,19 +107,6 @@ public class WatchlistFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("name",watchlist.getMovieName());
                 editor.apply();
-
-                /*
-                Movie movie = movies.get(position);
-                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromSearch", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("name",movie.getName());
-                        editor.putString("release",movie.getDate());
-                        editor.putString("imagePath",movie.getImagePath());
-                        editor.putString("summary",movie.getSummary());
-                        editor.putString("score",movie.getScore().toString());
-                        editor.putInt("id",movie.getId());
-                        editor.apply();
-                 */
 
                 // This bundle let Movie View Screen to check which fragment from
                 MovieViewFragment movieViewFragment = new MovieViewFragment();
@@ -157,6 +117,7 @@ public class WatchlistFragment extends Fragment {
             }
         });
 
+        // Delete selected movie or delete all
         Button buttonDelete = getActivity().findViewById(R.id.watchlist_delete);
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,29 +141,6 @@ public class WatchlistFragment extends Fragment {
                 alertDialog.show();
             }
         });
-
-        /*
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Movie movie = movies.get(position);
-                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MessageFromSearch", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("name",movie.getName());
-                        editor.putString("release",movie.getDate());
-                        editor.putString("imagePath",movie.getImagePath());
-                        editor.putString("summary",movie.getSummary());
-                        editor.putString("score",movie.getScore().toString());
-                        editor.putInt("id",movie.getId());
-                        editor.apply();
-                        MovieViewFragment movieViewFragment = new MovieViewFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("sourceFrom","Watchlist");
-                        movieViewFragment.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,movieViewFragment).commit();
-                      }
-                });
-         */
     }
 
     protected void setWatchlist(int id, String name, String release, String current) {
@@ -223,7 +161,6 @@ public class WatchlistFragment extends Fragment {
             this.listView = listView;
         }
 
-
         @Override
         public int getCount() {
             return list.size();
@@ -243,22 +180,11 @@ public class WatchlistFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             holder = new ViewHolder();
-            /*
-            if (convertView == null) {
-                holder = new ViewHolder();
 
-             */
             convertView = inflater.inflate(R.layout.screen_watchlist_listview, parent, false);
             holder.textViewTitle = convertView.findViewById(R.id.watchlist_lv_title);
             holder.textViewRelease = convertView.findViewById(R.id.watchlist_lv_release);
             holder.textViewAdded = convertView.findViewById(R.id.watchlist_lv_added_date);
-                /*
-                convertView.setTag(holder+"Message");
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-                 */
 
             holder.textViewTitle.setText(list.get(position).getMovieName());
             holder.textViewRelease.setText("Release Date: "+list.get(position).getReleaseDate());
@@ -279,13 +205,5 @@ public class WatchlistFragment extends Fragment {
     protected void sendToast(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
     }
-
-
-
-
-
-
-
-
 
 }

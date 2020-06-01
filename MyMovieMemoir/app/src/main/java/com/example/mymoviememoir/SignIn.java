@@ -82,7 +82,7 @@ public class SignIn extends AppCompatActivity {
                 sendToast("User Not Found");
             } else {
                 if (passwordRight(password)) {
-                    // Pass credential
+                    // Pass credential info
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("credentialFromSignIn", credential);
                     // Turn to the MainActivity to release Home Screen
@@ -111,7 +111,7 @@ public class SignIn extends AppCompatActivity {
         return passwordHash.equals(credentials[0].getPasswordhash());
     }
 
-    // transfer with MD5
+    // encryption with MD5
     public static String md5(String originalStr) {
         MessageDigest messageDigest = null;
         String result = "";

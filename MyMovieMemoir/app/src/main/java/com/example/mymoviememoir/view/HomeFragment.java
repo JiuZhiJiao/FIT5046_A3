@@ -53,7 +53,6 @@ public class HomeFragment extends Fragment {
         memoirs = new ArrayList<>();
         okHttpConnection = new OKHttpConnection();
         FindByCredentialId findByCredentialId = new FindByCredentialId();
-        //FindByPersonId findByPersonId = new FindByPersonId();
         FindTopMovie findTopMovie = new FindTopMovie();
 
         // get credential and person from sign in and sign up and set person and credential
@@ -75,21 +74,6 @@ public class HomeFragment extends Fragment {
             credential = bundle.getParcelable("credentialFromSignUp");
             person = bundle.getParcelable("personFromSignUp");
         }
-
-        /*
-        // Get Memoir object from NetBean
-        String memoirStr = "";
-        try {
-            memoirStr = findByPersonId.execute(Integer.toString(person.getPersonid())).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Gson gson = new Gson();
-        memoirs = gson.fromJson(memoirStr, new TypeToken<List<Memoir>>(){}.getType());
-
-         */
 
         // Set top5 movie
         String topFiveStr = "";
@@ -119,17 +103,11 @@ public class HomeFragment extends Fragment {
         listView.setAdapter(simpleAdapter);
 
 
-
-
         // Initial UI
         TextView textViewHi = getActivity().findViewById(R.id.home_tv_hi);
         TextView textViewDate = getActivity().findViewById(R.id.home_tv_current_date);
         textViewHi.setText("Hi, " + person.getFirstname());
         textViewDate.setText(currentDate());
-
-
-
-        // pass bundle between fragments
 
     }
 
@@ -146,23 +124,6 @@ public class HomeFragment extends Fragment {
             super.onPostExecute(s);
         }
     }
-
-    /*
-    // find memoir by person id
-    private class FindByPersonId extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            String id = strings[0];
-            return okHttpConnection.findByPersonId(id);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
-    }
-
-     */
 
     // find top five
     private class FindTopMovie extends AsyncTask<String, Void, String> {

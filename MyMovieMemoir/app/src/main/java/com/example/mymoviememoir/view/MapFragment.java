@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,19 +21,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.security.spec.ECField;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -66,15 +61,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState);
 
         okHttpConnection = new OKHttpConnection();
-        GetAllCinema getAllCinema = new GetAllCinema();
+        //GetAllCinema getAllCinema = new GetAllCinema();
 
         // Get All cinema
         cinemaStr = "";
         try {
-            cinemaStr = getAllCinema.execute().get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            cinemaStr = new GetAllCinema().execute().get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         Gson gson = new Gson();
@@ -85,8 +78,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         person = new Person();
         FindByCredentialId findByCredentialId = new FindByCredentialId();
         updateInfo(findByCredentialId);
-
-        System.out.println(person.getAddress());
 
         // Show Map
         mapView = getActivity().findViewById(R.id.map_google);
@@ -109,7 +100,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap onMap) {
         googleMap = onMap;
 
-        Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
+        Geocoder geocoder = new Geocoder(getActivity().getApplicationContext(),Locale.ENGLISH);
         // Set User Home
         List<Address> addresses = null;
         try {
@@ -119,17 +110,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
         LatLng userHome = new LatLng(addresses.get(0).getLatitude(),addresses.get(0).getLongitude());
         googleMap.addMarker(new MarkerOptions().position(userHome).title((person.getFirstname())+"'s Home").icon(BitmapDescriptorFactory.defaultMarker(180)));
-        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(userHome));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userHome,10));
         googleMap.getUiSettings().setZoomControlsEnabled(true);
 
-        // Set Cinema
+        // Set Cinema Location
         for (int i = 0; i < cinemas.length; i++) {
             String searchStr = cinemas[i].getCinemapostcode() + " " + cinemas[i].getCinemaname();
             try {
                 addressTemp = geocoder.getFromLocationName(searchStr,1);
                 if (addressTemp != null && addressTemp.size()>0) {
-                    System.out.println(addressTemp.get(0).toString());
                     Double lat = addressTemp.get(0).getLatitude();
                     Double lon = addressTemp.get(0).getLongitude();
                     latLng = new LatLng(lat,lon);

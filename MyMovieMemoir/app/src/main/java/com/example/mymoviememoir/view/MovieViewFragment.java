@@ -21,11 +21,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.mymoviememoir.R;
-import com.example.mymoviememoir.entity.Watchlist;
 import com.example.mymoviememoir.model.Movie;
 import com.example.mymoviememoir.network.OKHttpConnection;
 import com.example.mymoviememoir.viewmodel.WatchlistViewModel;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +39,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import okhttp3.OkHttpClient;
 
 public class MovieViewFragment extends Fragment {
 
@@ -89,8 +85,6 @@ public class MovieViewFragment extends Fragment {
         watchlistViewModel = new ViewModelProvider(this).get(WatchlistViewModel.class);
         watchlistViewModel.initializeVars(getActivity().getApplication());
 
-
-
         // Get UI
         ImageView imageView = getActivity().findViewById(R.id.movie_view_image);
         TextView textViewName = getActivity().findViewById(R.id.movie_view_name);
@@ -106,10 +100,11 @@ public class MovieViewFragment extends Fragment {
         Button buttonWatchlist = getActivity().findViewById(R.id.movie_view_watchlist);
         Button buttonMemoir = getActivity().findViewById(R.id.movie_view_memoir);
 
+        // Set genre(s), country, cast(s) and director(s)
         GetGenreCountryById getGenreCountryById = new GetGenreCountryById(textViewGenre,textViewCountry);
         GetCastDirectorById getCastDirectorById = new GetCastDirectorById(textViewCast,textViewDirector);
 
-        // Set source
+        // Set source, load this screen by sourceFrom, which is from movie search or watchlist
         sourceFrom = getArguments().getString("sourceFrom");
         if (sourceFrom.equals("MovieSearch")) {
             // Get Info from movie search
@@ -122,18 +117,8 @@ public class MovieViewFragment extends Fragment {
             id = sharedPreferences.getInt("id",0);
             getGenreCountryById.execute(String.valueOf(id));
             getCastDirectorById.execute(String.valueOf(id));
-            /*
-            System.out.println(country);
-            textViewCountry.setText("Country: "+country);
-            String genreStr = "Genre: ";
-            for (int i = 0; i < genre.size() && i < 3; i ++) {
-                genreStr += genre.get(i);
-            }
-            System.out.println(genreStr);
-            textViewGenre.setText(genreStr);
-
-             */
         } else {
+            // set Add To Watchlist button un clicked and get info from movie watchlist
             buttonWatchlist.setEnabled(false);
             sharedPreferences = getActivity().getSharedPreferences("MessageFromWatchlist", Context.MODE_PRIVATE);
             name = sharedPreferences.getString("name",null);
@@ -155,13 +140,13 @@ public class MovieViewFragment extends Fragment {
         }
 
         // Set UI
-        System.out.println(imagePath);
         imageDownload.execute(imagePath);
         textViewName.setText(name);
         textViewDate.setText(release);
         textViewSummary.setText("Summary: " + summary);
         ratingBar.setRating(score.floatValue());
 
+        // Add to Memoir
         buttonMemoir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +161,7 @@ public class MovieViewFragment extends Fragment {
             }
         });
 
+        // Add to Watchlist
         buttonWatchlist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,7 +201,6 @@ public class MovieViewFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            //addMovie(s);
         }
     }
 

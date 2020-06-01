@@ -1,7 +1,6 @@
 package com.example.mymoviememoir.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,14 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 
 import com.example.mymoviememoir.R;
 import com.example.mymoviememoir.model.Movie;
@@ -40,13 +37,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.ResponseBody;
 
 public class MovieSearchFragment extends Fragment {
 
@@ -80,17 +72,6 @@ public class MovieSearchFragment extends Fragment {
         score = 0;
         movies = new ArrayList<>();
 
-        /*
-        // get data
-
-        // Set list view
-        String[] colHead = new String[] {"image","moviename","releaseyear"};
-        int[] dataCell = new int[] {R.id.movie_search_image,R.id.movie_search_tv_name,R.id.movie_search_tv_date};
-        ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
-        SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(), null, R.layout.screen_movie_search_listview,colHead,dataCell);
-        listView.setAdapter(simpleAdapter);
-
-         */
         final EditText editTextMovie = getActivity().findViewById(R.id.movie_search_et_name);
         Button buttonSearch = getActivity().findViewById(R.id.movie_search_bt_search);
         final ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
@@ -112,15 +93,11 @@ public class MovieSearchFragment extends Fragment {
                 movies = new ArrayList<>();
                 addMovie(data);
 
-
-                for (Movie m: movies) {
-                    System.out.println(m.getName()+" "+m.getId() +" "+m.getImagePath());
-                }
-
+                // Set List View
                 MyAdapter myAdapter = new MyAdapter(getActivity(),movies,listView);
                 listView.setAdapter(myAdapter);
 
-
+                // Turn to Movie View Screen and share info
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -142,25 +119,6 @@ public class MovieSearchFragment extends Fragment {
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.nav_content_frame,movieViewFragment).commit();
                       }
                 });
-
-                /*
-                HashMap<String, Object> hashMap = new HashMap<>();
-                List<HashMap<String, Object>> movieDetail = new ArrayList<>();
-                for (Movie m: movies) {
-                    hashMap.put("image",getBitmapFromUrl(m.getImagePath()));
-                    hashMap.put("name",m.getName());
-                    hashMap.put("release",m.getDate());
-                    movieDetail.add(hashMap);
-                }
-
-
-                ListView listView = getActivity().findViewById(R.id.movie_search_list_view);
-                String[] colHead = new String[] {"image","name","release"};
-                int[] dataCell = new int[] {R.id.movie_search_image,R.id.movie_search_lv_tv_name,R.id.movie_search_lv_tv_date};
-                SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(), movieDetail, R.layout.screen_movie_search_listview,colHead,dataCell);
-                listView.setAdapter(simpleAdapter);
-
-                 */
             }
         });
 
@@ -176,7 +134,6 @@ public class MovieSearchFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            //addMovie(s);
         }
     }
 
